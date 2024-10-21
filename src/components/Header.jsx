@@ -1,7 +1,43 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/img/logo.png'
+import React, { useState, useEffect,useRef  } from 'react';
+import { BASE_URL } from '../constants';
+import axios from 'axios';
+import { Avatar } from '@mui/material';
 
 function Header() {
+  const [user, setUser] = useState(null);
+  const [avatar, setAvatar] = useState("");
+  const hasFetchedUser = useRef(false)
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && !hasFetchedUser.current) {
+      hasFetchedUser.current = true;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/User/profile`)
+        .then(response => {
+          setUser(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching user profile:', error);
+        });
+    }
+  }, []);
+    
+  useEffect(() => {
+    if(user != null){
+        setAvatar(user.avatar);
+    }
+  }, [user]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setUserName("");
+    navigate('/');
+  }
 
     return (
       <>
@@ -49,9 +85,20 @@ function Header() {
                     Contact
                     </a>
                 </li>
-                <li className="nav-item">
+                {user == null && <li className="nav-item">
                     <Link className="nav-link" to="/auth">Login/Sign up</Link>
-                </li>
+                  </li> || <>
+                        <li className="nav-item" style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <Avatar src={avatar}/>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/" onClick={handleLogout}>Logout</Link>
+                        </li>
+                    </>}
                 </ul>
             </div>
             </div>

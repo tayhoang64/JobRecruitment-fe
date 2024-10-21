@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../assets/auth/main.css';
 import axios from 'axios'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../constants';
+import GoogleLoginButton from './GoogleLoginButton';
+import FacebookLoginButton from './FacebookLoginButton';
 
 function Auth() {
   const [showSignup, setShowSignup] = useState(false);
@@ -18,6 +21,7 @@ function Auth() {
   const toggleForm = () => {
     setShowSignup(!showSignup);
   };
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -51,7 +55,7 @@ function Auth() {
       password: signupPassword,
     };
   
-    axios.post('https://localhost:7282/api/Auth/register', signupData)
+    axios.post(`${BASE_URL}/api/Auth/register`, signupData)
       .then((response) => {
         
         setShowSignup(false);
@@ -100,7 +104,8 @@ function Auth() {
       password: loginPassword,
     };
 
-    axios.post('https://localhost:7282/api/Auth/login', loginData)
+
+    axios.post(`${BASE_URL}/api/Auth/login`, loginData)
       .then((response) => {
         toast.success("Login successful!", {
           position: "top-center",
@@ -112,6 +117,7 @@ function Auth() {
           progress: undefined,
           theme: "dark",
         });
+        localStorage.setItem('token', response.data.token);
         navigate('/');
       })
       .catch((error) => {
@@ -128,7 +134,6 @@ function Auth() {
       });
   };
   
-
   return (
     <>
     <div className="content">
@@ -152,12 +157,8 @@ function Auth() {
             <p>or sign in with</p>
           </div>
           <div className="button-group">
-            <button className="btn-google">
-              Google <i className="fa-brands fa-google"></i>
-            </button>
-            <button className="btn-facebook">
-              Facebook <i className="fa-brands fa-facebook"></i>
-            </button>
+              <GoogleLoginButton />
+              <FacebookLoginButton/>
           </div>
           <p className="message">
             <a href="#" onClick={toggleForm}>Not a Member? click here</a>
@@ -190,18 +191,7 @@ function Auth() {
           <button className="btn-signin" onClick={handleSignupSubmit}>
             Sign Up <i className="fa-solid fa-user-plus"></i>
           </button>
-          <div className="option-text">
-            <hr />
-            <p>or sign up with</p>
-          </div>
-          <div className="button-group">
-            <button className="btn-google">
-              Google <i className="fa-brands fa-google"></i>
-            </button>
-            <button className="btn-facebook">
-              Facebook <i className="fa-brands fa-facebook"></i>
-            </button>
-          </div>
+          
           <p className="message">
             <a href="#" onClick={toggleForm}>Already a Member? click here</a>
           </p>
