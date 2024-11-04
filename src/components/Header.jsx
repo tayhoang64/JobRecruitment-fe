@@ -4,6 +4,7 @@ import React, { useState, useEffect,useRef  } from 'react';
 import { BASE_URL } from '../constants';
 import axios from 'axios';
 import { Avatar } from '@mui/material';
+import AccountMenu from './AccountMenu';
 
 function Header() {
   const [user, setUser] = useState(null);
@@ -19,6 +20,7 @@ function Header() {
       axios.get(`${BASE_URL}/api/User/profile`)
         .then(response => {
           setUser(response.data);
+          console.log(response.data);
         })
         .catch(error => {
           console.error('Error fetching user profile:', error);
@@ -32,12 +34,7 @@ function Header() {
     }
   }, [user]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    setUserName("");
-    navigate('/');
-  }
+  
 
     return (
       <>
@@ -93,10 +90,8 @@ function Header() {
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
-                            <Avatar src={avatar}/>
-                        </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/" onClick={handleLogout}>Logout</Link>
+                             {/* <Avatar src={avatar}/>  */}
+                             <AccountMenu avatar={<Avatar src={avatar}/>} setUser={setUser} />
                         </li>
                     </>}
                 </ul>
