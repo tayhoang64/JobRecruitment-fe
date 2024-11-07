@@ -6,11 +6,11 @@ import axios from 'axios';
 import { Avatar } from '@mui/material';
 import AccountMenu from './AccountMenu';
 
-function Header() {
+function Header({ offSlide }) {
   const [user, setUser] = useState(null);
   const [avatar, setAvatar] = useState("");
   const hasFetchedUser = useRef(false)
-  
+  console.log("Header loaded");
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !hasFetchedUser.current) {
@@ -48,7 +48,7 @@ function Header() {
                 <span className="icon-menu"></span>
                 <span className="icon-menu"></span>
                 </button>
-                <a href="index.html" className="navbar-brand"><img src={logo} alt="" /></a>
+                <Link to="/" className="navbar-brand"><img src={logo} alt="" /></Link>
             </div>
             <div className="collapse navbar-collapse" id="main-navbar">
                 <ul className="onepage-nev navbar-nav mr-auto w-100 justify-content-end clearfix">
@@ -118,7 +118,7 @@ function Header() {
             </li>
             </ul>
         </nav>
-        <div className='hero-area-bg hero-area'>
+        {offSlide == true && <div className='hero-area-bg hero-area'>
             <div className="overlay"></div>
             <div className="container">
             <div className="row">
@@ -151,7 +151,7 @@ function Header() {
                 </div>
             </div>
             </div>
-        </div>
+        </div>}
         </header>
       </>
     )

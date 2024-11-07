@@ -16,6 +16,7 @@ import Counter from './components/Counter';
 import Contact from './components/Contact';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'; 
 import Auth from './components/Auth';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -24,9 +25,18 @@ function App() {
     <>
       <Router>
         <Routes>
+          
+          <Route path='/auth' element={<Auth />} />
+          <Route path='/profile' element={
+            <>
+              <Header offSlide={false} />
+              <Profile/>
+              <Footer/>
+            </>} 
+          />
           <Route path='/' element={
             <>
-              <Header />
+              <Header offSlide={true} />
               <About />
               <Service />
               <Resume />
@@ -36,7 +46,6 @@ function App() {
               <Footer />
             </>
           } />
-          <Route path='/auth' element={<Auth />} />
         </Routes>
       </Router>
     </>
