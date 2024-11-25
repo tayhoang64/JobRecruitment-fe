@@ -10,7 +10,7 @@ function Header({ offSlide }) {
   const [user, setUser] = useState(null);
   const [avatar, setAvatar] = useState("");
   const hasFetchedUser = useRef(false)
-  console.log("Header loaded");
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token && !hasFetchedUser.current) {
@@ -20,7 +20,6 @@ function Header({ offSlide }) {
       axios.get(`${BASE_URL}/api/User/profile`)
         .then(response => {
           setUser(response.data);
-          console.log(response.data);
         })
         .catch(error => {
           console.error('Error fetching user profile:', error);
@@ -61,9 +60,9 @@ function Header({ offSlide }) {
                     <Link to="/templates" className='nav-link'>CV Decorator</Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#services">
-                    Services
-                    </a>
+                    <Link to ="/jobs" className="nav-link">
+                    Jobs
+                    </Link>
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" href="#resume">

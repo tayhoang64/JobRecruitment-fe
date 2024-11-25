@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
@@ -16,6 +16,9 @@ import {
 import { styled } from "@mui/system";
 import { FaMapMarkerAlt, FaEnvelope, FaPhone, FaGlobe, FaChevronDown, FaEdit } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
+import axios from "axios";
+import { BASE_URL } from "../constants";
+import { Link } from "react-router-dom";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: "50px",
@@ -33,48 +36,40 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 const Profile = () => {
+  const [userData, setUserData] = useState({});
+
+  //dung useEffect truoc khi fetch data
+  useEffect(() => {
+    axios.get(`${BASE_URL}/api/user/Profile`)
+      .then((response) => {
+        let user = response.data;
+        setUserData({
+          fullName: user.fullName,
+          title: user.title,
+          location: user.address,
+          email: user.email,
+          website: user.personalLink, 
+          phone: user.phone,
+          about: user.aboutMe,
+          skills: user.mySkills.$values,
+          education: user.educations.$values,
+          certificates: user.certificates.$values,
+          projects: user.projects.$values,
+          experience: user.workExperience,
+          avatar: user.avatar,
+        });
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(userData)
+  // }, [userData]);
+
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
-
-  const userData = {
-    fullName: "Nguyen Van A",
-    title: "Front-End Developer",
-    location: "Ho Chi Minh",
-    email: "nguyen.van.a@example.com",
-    phone: "+84 123 456 789",
-    website: "www.example.com",
-    about: "Passionate front-end developer with 5+ years of experience in creating responsive and user-friendly web applications. Proficient in modern JavaScript frameworks and libraries.",
-    skills: ["React", "TypeScript", "Material-UI", "Node.js", "MongoDB", "AWS"],
-    education: [
-      {
-        degree: "Bachelor of Computer Science",
-        institution: "XYZ University",
-        year: "2015-2019",
-      },
-    ],
-    certificates: [
-      {
-        name: "AWS Certified Developer",
-        issuer: "Amazon Web Services",
-        year: "2021",
-      },
-    ],
-    projects: [
-      {
-        name: "E-commerce Platform",
-        description: "Developed a full-stack e-commerce platform using MERN stack",
-        year: "2022",
-      },
-    ],
-    experience: [
-      {
-        position: "Senior Frontend Developer",
-        company: "Tech Solutions Inc.",
-        duration: "2019-Present",
-        description: "Leading frontend development team and implementing new features",
-      },
-    ],
-  };
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -94,18 +89,22 @@ const Profile = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={4} display="flex" flexDirection="column" alignItems="center">
             <ProfileAvatar
-              src="images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3"
-              alt={userData.fullName}
+              src={userData.avatar}
+              alt={userData.fullName != null ? userData.fullName : "Chưa cập nhật"}
             />
             <Typography variant="h4" gutterBottom align="center">
-              {userData.fullName}
+              {userData.fullName != null ? userData.fullName : "Chưa cập nhật"}
             </Typography>
             <Typography variant="h6" color="textSecondary" gutterBottom>
-              {userData.title}
+              {userData.title != null ? userData.title : "Chưa cập nhật"}
             </Typography>
             <Box display="flex" alignItems="center" marginBottom="8px">
               <FaMapMarkerAlt style={{ marginRight: "8px" }} />
-              <Typography>{userData.location}</Typography>
+              <Typography>{userData.location != null ? userData.location : "Chưa cập nhật"}</Typography>
+            </Box>
+            <Box display="flex" alignItems="center" marginBottom="8px">
+              <FaMapMarkerAlt style={{ marginRight: "8px" }} />
+              <Typography>{userData.website != null ? userData.website : "Chưa cập nhật"}</Typography>
             </Box>
             <Button
               variant="contained"
@@ -113,7 +112,7 @@ const Profile = () => {
               startIcon={<FaEdit />}
               sx={{ marginTop: "16px" }}
             >
-              Edit Profile
+              <Link to ="/profile/update" style={{color: "white"}}>Edit</Link>
             </Button>
           </Grid>
 
@@ -122,7 +121,7 @@ const Profile = () => {
               <Typography variant="h6" gutterBottom>
                 About Me
               </Typography>
-              <Typography>{userData.about}</Typography>
+              <Typography>{userData.about != null ? userData.about : "Chưa cập nhật"}</Typography>
             </Box>
 
             <Box marginBottom="24px">
@@ -133,19 +132,13 @@ const Profile = () => {
                 <Grid item xs={12} sm={6}>
                   <Box display="flex" alignItems="center">
                     <FaEnvelope style={{ marginRight: "8px" }} />
-                    <Typography>{userData.email}</Typography>
+                    <Typography>{userData.email != null ? userData.email : "Chưa cập nhật"}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Box display="flex" alignItems="center">
                     <FaPhone style={{ marginRight: "8px" }} />
-                    <Typography>{userData.phone}</Typography>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Box display="flex" alignItems="center">
-                    <FaGlobe style={{ marginRight: "8px" }} />
-                    <Typography>{userData.website}</Typography>
+                    <Typography>{userData.phone != null ? userData.phone : "Chưa cập nhật"}</Typography>
                   </Box>
                 </Grid>
               </Grid>
@@ -156,11 +149,16 @@ const Profile = () => {
                 Skills
               </Typography>
               <Box display="flex" flexWrap="wrap" gap={1}>
-                {userData.skills.map((skill) => (
-                  <Chip key={skill} label={skill} color="primary" variant="outlined" />
-                ))}
+                {userData?.skills?.length > 0 ? (
+                  userData.skills.map((skill) => (
+                    <Chip key={skill} label={skill} color="primary" variant="outlined" />
+                  ))
+                ) : (
+                  "Chưa cập nhật"
+                )}
               </Box>
             </Box>
+
 
             {["education", "certificates", "projects", "experience"].map((section) => (
               <Accordion
@@ -175,27 +173,32 @@ const Profile = () => {
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  {userData[section].map((item, index) => (
-                    <Box key={index} marginBottom={index !== userData[section].length - 1 ? 2 : 0}>
-                      <Typography variant="subtitle1" fontWeight="bold">
-                        {item.degree || item.name || item.position}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {item.institution || item.issuer || item.company}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {item.year || item.duration}
-                      </Typography>
-                      {item.description && (
-                        <Typography variant="body2" style={{ marginTop: "8px" }}>
-                          {item.description}
+                  {(Array.isArray(userData[section]) && userData[section].length > 0) ? (
+                    userData[section].map((item, index) => (
+                      <Box key={index} marginBottom={index !== userData[section].length - 1 ? 2 : 0}>
+                        <Typography variant="subtitle1" fontWeight="bold">
+                          {item.degree || item.name || item.position}
                         </Typography>
-                      )}
-                    </Box>
-                  ))}
+                        <Typography variant="body2" color="textSecondary">
+                          {item.institution || item.issuer || item.company}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary">
+                          {item.year || item.duration}
+                        </Typography>
+                        {item.description && (
+                          <Typography variant="body2" style={{ marginTop: "8px" }}>
+                            {item.description}
+                          </Typography>
+                        )}
+                      </Box>
+                    ))
+                  ) : (
+                    "Chưa cập nhật"
+                  )}
                 </AccordionDetails>
               </Accordion>
             ))}
+
           </Grid>
         </Grid>
       </StyledPaper>
