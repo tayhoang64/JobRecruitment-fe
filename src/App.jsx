@@ -14,26 +14,51 @@ import Resume from './components/Resume';
 import Portfolio from './components/Portfolio';
 import Counter from './components/Counter';
 import Contact from './components/Contact';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'; 
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
+import UpdateProfile from './components/UpdateProfile';
+import JobList from './components/JobList';
+import JobViewDetail from './components/JobViewDetail';
 
 
 function App() {
-  
+
   return (
     <>
       <Router>
         <Routes>
-          
+
           <Route path='/auth' element={<Auth />} />
           <Route path='/profile' element={
             <>
               <Header offSlide={false} />
-              <Profile/>
-              <Footer/>
-            </>} 
+              <Profile />
+              <Footer />
+            </>}
           />
+          <Route path='/profile/update' element={
+            <>
+              <Header offSlide={false} />
+              <UpdateProfile />
+              <Footer />
+            </>}
+          />
+          <Route path='/jobs' element={
+            <>
+              <Header offSlide={false} />
+              <JobList />
+              <Footer />
+            </>}
+          />
+          <Route path='/jobs/:id' element={
+            <>
+              <Header offSlide={false} />
+              <JobViewDetail />
+              <Footer />
+            </>
+          } />
+
           <Route path='/' element={
             <>
               <Header offSlide={true} />
