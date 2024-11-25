@@ -58,9 +58,7 @@ function Header({ offSlide }) {
                     </a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#about">
-                    About
-                    </a>
+                    <Link to="/templates" className='nav-link'>CV Decorator</Link>
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" href="#services">

@@ -17,6 +17,7 @@ import Contact from './components/Contact';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'; 
 import Auth from './components/Auth';
 import Profile from './components/Profile';
+import TemplateList from './components/TemplateList';
 
 
 function App() {
@@ -31,6 +32,13 @@ function App() {
             <>
               <Header offSlide={false} />
               <Profile/>
+              <Footer/>
+            </>} 
+          />
+          <Route path='/templates' element={
+            <>
+              <Header offSlide={false} />
+              <TemplateList />
               <Footer/>
             </>} 
           />
