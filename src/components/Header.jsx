@@ -5,11 +5,15 @@ import { BASE_URL } from '../constants';
 import axios from 'axios';
 import { Avatar } from '@mui/material';
 import AccountMenu from './AccountMenu';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from 'react-router-dom';
 
 function Header({ offSlide }) {
   const [user, setUser] = useState(null);
+  const [role, SetRole] = useState([]);
+  const hasFetchedUser = useRef(false);
   const [avatar, setAvatar] = useState("");
-  const hasFetchedUser = useRef(false)
   
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -25,13 +29,23 @@ function Header({ offSlide }) {
           console.error('Error fetching user profile:', error);
         });
     }
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/User/getRoles`)
+        .then(response => {
+            SetRole(Array.from(response.data.$values))
+        })
+        .catch(error => {
+          console.error('Error fetching user role:', error);
+        });
   }, []);
     
   useEffect(() => {
     if(user != null){
         setAvatar(user.avatar);
     }
-  }, [user]);
+  }, [user, role]);
 
   
 
@@ -64,11 +78,11 @@ function Header({ offSlide }) {
                     Jobs
                     </Link>
                 </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="#resume">
-                    Resume
-                    </a>
-                </li>
+                {role.indexOf("Admin") > -1 && (
+                    <li className="nav-item">
+                        <Link className="nav-link" to={`/dashboard`}>Dashboard</Link>
+                    </li>
+                    )}
                 <li className="nav-item">
                     <a className="nav-link" href="#portfolios">
                     Work

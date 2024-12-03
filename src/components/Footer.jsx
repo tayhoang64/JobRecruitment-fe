@@ -1,5 +1,38 @@
+import React, { useState, useEffect,useRef  } from 'react';
+import { BASE_URL } from '../constants';
+import axios from 'axios';
+import { Link } from 'react-router-dom'
 
 function Footer() {
+  const [user, setUser] = useState(null);
+  const [role, SetRole] = useState([]);
+  const hasFetchedUser = useRef(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && !hasFetchedUser.current) {
+      hasFetchedUser.current = true;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/User/profile`)
+        .then(response => {
+          setUser(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching user profile:', error);
+        });
+    }
+
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/User/getRoles`)
+        .then(response => {
+            SetRole(Array.from(response.data.$values))
+        })
+        .catch(error => {
+          console.error('Error fetching user role:', error);
+        });
+  }, []);
 
     return (
       <>
@@ -26,6 +59,9 @@ function Footer() {
                 </li>
               </ul>
               <p>Copyright © 2018 UIdeck All Right Reserved</p>
+              {user != null && (
+                <Link to={`/company/signup`}>Are you a company? click here</Link>
+              )}
             </div>
           </div>
         </div>
