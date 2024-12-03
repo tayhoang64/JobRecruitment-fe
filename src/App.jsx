@@ -14,13 +14,16 @@ import Resume from './components/Resume';
 import Portfolio from './components/Portfolio';
 import Counter from './components/Counter';
 import Contact from './components/Contact';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes, Navigate } from 'react-router-dom';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
 import TemplateList from './components/TemplateList';
 import UpdateProfile from './components/UpdateProfile';
 import JobList from './components/JobList';
 import JobViewDetail from './components/JobViewDetail';
+import Dashboard from './components/Dashboard';
+import JobDetailsForm from './components/CompanyAdd';
+import CompanyAdd from './components/CompanyAdd';
 
 
 function App() {
@@ -42,8 +45,8 @@ function App() {
             <>
               <Header offSlide={false} />
               <TemplateList />
-              <Footer/>
-            </>} 
+              <Footer />
+            </>}
           />
           <Route path='/profile/update' element={
             <>
@@ -59,6 +62,7 @@ function App() {
               <Footer />
             </>}
           />
+          
           <Route path='/jobs/:id' element={
             <>
               <Header offSlide={false} />
@@ -66,6 +70,23 @@ function App() {
               <Footer />
             </>
           } />
+          <Route
+            path="/company/signup"
+            element={
+              <>
+                <Header offSlide={false}/>
+                <CompanyAdd />
+                <Footer /></>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <>
+                <Dashboard />
+                <Footer /></>
+            }
+          />
 
           <Route path='/' element={
             <>

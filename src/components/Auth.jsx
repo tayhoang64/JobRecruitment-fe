@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../constants';
 import GoogleLoginButton from './GoogleLoginButton';
-import FacebookLoginButton from './FacebookLoginButton';
+import { Link } from 'react-router-dom'
 
 function Auth() {
   const [showSignup, setShowSignup] = useState(false);
@@ -158,7 +158,6 @@ function Auth() {
           </div>
           <div className="button-group">
               <GoogleLoginButton />
-              <FacebookLoginButton/>
           </div>
           <p className="message">
             <a href="#" onClick={toggleForm}>Not a Member? click here</a>
