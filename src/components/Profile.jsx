@@ -161,7 +161,8 @@ const Profile = () => {
 
 
             {["education", "certificates", "projects", "experience"].map((section) => (
-              <Accordion
+              <>
+              <Accordion 
                 key={section}
                 expanded={expanded === section}
                 onChange={handleAccordionChange(section)}
@@ -197,6 +198,8 @@ const Profile = () => {
                   )}
                 </AccordionDetails>
               </Accordion>
+              <Link to={`/profile/${section}`}>Manage {section}</Link>
+              </>
             ))}
 
           </Grid>
