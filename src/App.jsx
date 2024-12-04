@@ -24,6 +24,10 @@ import JobViewDetail from './components/JobViewDetail';
 import Dashboard from './components/Dashboard';
 import JobDetailsForm from './components/CompanyAdd';
 import CompanyAdd from './components/CompanyAdd';
+import TemplateDB from './components/TemplateDB';
+import ProtectedRoute from './components/ProtectedRoute';
+import isAdmin from './utils/isAdmin';
+import isCVDecorator from './utils/isCVDecorator';
 
 
 function App() {
@@ -79,12 +83,25 @@ function App() {
                 <Footer /></>
             }
           />
+          
           <Route
             path="/dashboard"
             element={
-              <>
+              <ProtectedRoute checkPermission={isAdmin} redirectPath="/">
                 <Dashboard />
-                <Footer /></>
+                <Footer />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/template"
+            element={
+              <ProtectedRoute checkPermission={isCVDecorator} redirectPath="/">
+                <Header offSlide={false}/>
+                <TemplateDB />
+                <Footer />
+              </ProtectedRoute>
             }
           />
 
