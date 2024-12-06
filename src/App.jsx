@@ -28,6 +28,10 @@ import TemplateDB from './components/TemplateDB';
 import ProtectedRoute from './components/ProtectedRoute';
 import isAdmin from './utils/isAdmin';
 import isCVDecorator from './utils/isCVDecorator';
+import AddJobForm from './components/JobAdd';
+import isContentCreator from './utils/isContentCreator';
+import UpdateJobForm from './components/JobUpdate';
+import CompanyViewDetail from './components/CompanyDetail';
 
 
 function App() {
@@ -66,7 +70,33 @@ function App() {
               <Footer />
             </>}
           />
+          <Route path='/company/:id' element={
+            <>
+              <Header offSlide={false} />
+              <CompanyViewDetail />
+              <Footer />
+            </>
+          } />
+
+          <Route path='/company/:companyId/jobs/update/:id' element={
+            <ProtectedRoute checkPermission={isContentCreator} redirectPath="/">
+              <Header offSlide={false} />
+              <UpdateJobForm />
+              <Footer />
+            </ProtectedRoute>}
+          />
           
+
+          <Route path='/company/:companyId/jobs/create' element={
+            <ProtectedRoute checkPermission={isContentCreator} redirectPath="/">
+              <Header offSlide={false} />
+              <AddJobForm />
+              <Footer />
+            </ProtectedRoute>}
+          />
+
+
+
           <Route path='/jobs/:id' element={
             <>
               <Header offSlide={false} />
@@ -74,16 +104,18 @@ function App() {
               <Footer />
             </>
           } />
+
+          
+
           <Route
             path="/company/signup"
             element={
               <>
-                <Header offSlide={false}/>
+                <Header offSlide={false} />
                 <CompanyAdd />
                 <Footer /></>
             }
           />
-          
           <Route
             path="/dashboard"
             element={
@@ -98,7 +130,7 @@ function App() {
             path="/dashboard/template"
             element={
               <ProtectedRoute checkPermission={isCVDecorator} redirectPath="/">
-                <Header offSlide={false}/>
+                <Header offSlide={false} />
                 <TemplateDB />
                 <Footer />
               </ProtectedRoute>

@@ -19,6 +19,7 @@ const ListCompanyDB = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [companies, setCompanies] = useState([]);
+    const [activeCompanies, setActiveCompanies] = useState([])
 
     useEffect(() => {
         axios.get(`${BASE_URL}/api/Company/pending-company`)
@@ -26,7 +27,15 @@ const ListCompanyDB = () => {
                 setCompanies(response.data);
             })
             .catch(error => {
-                console.error('Error fetching companies:', error);
+                console.error('Error fetching pending companies:', error);
+            });
+
+            axios.get(`${BASE_URL}/api/Company/accepted-company`)
+            .then(response => {
+                setActiveCompanies(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching accepted companies:', error);
             });
     }, []);
 
@@ -60,6 +69,8 @@ const ListCompanyDB = () => {
     };
 
     return (
+        <>
+        <h1 style={{textAlign: "center"}}>Pending Company</h1>
         <Paper sx={{ width: "100%", mb: 2, p: 2 }}>
             <TableContainer>
                 <Table>
@@ -111,6 +122,52 @@ const ListCompanyDB = () => {
                 />
             </TableContainer>
         </Paper>
+        <h1 style={{textAlign: "center"}}>Active Company</h1>
+        <Paper sx={{ width: "100%", mb: 2, p: 2 }}>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>CompanyId</TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>Company Name</TableCell>
+                            <TableCell>Email Owner</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {activeCompanies.length > 0 ? activeCompanies.map(company => (
+                            <TableRow key={company.companyId}>
+                                <TableCell>{company.companyId}</TableCell>
+                                <TableCell><Avatar src={company.logo} /></TableCell>
+                                <TableCell>{company.companyName}</TableCell>
+                                <TableCell>{company.emailOwner}</TableCell>
+                                <TableCell style={{ display: 'flex', gap: '10px' }}>
+                                    <Button
+                                        variant="contained"
+                                        size="small"
+                                        color="error"
+                                        onClick={() => handleRejectCompany(company.companyId)}
+                                    >
+                                        Delete
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        )) : "No pending activeCompanies found"}
+                    </TableBody>
+                </Table>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={activeCompanies.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </TableContainer>
+        </Paper>
+        </>
     );
 };
 

@@ -230,11 +230,11 @@ const Dashboard = () => {
                             </ListItemIcon>
                             <ListItemText primary="Users" />
                         </ListItem>
-                        <ListItem button onClick={() => setCurrentView("Settings")}>
+                        <ListItem button onClick={() => setCurrentView("Companies")}>
                             <ListItemIcon>
                                 <FiSettings />
                             </ListItemIcon>
-                            <ListItemText primary="Settings" />
+                            <ListItemText primary="Companies" />
                         </ListItem>
                         <ListItem button onClick={() => setCurrentView("Analytics")}>
                             <ListItemIcon>
@@ -320,7 +320,7 @@ const Dashboard = () => {
                             </Paper>
                         )}
 
-                        {currentView === "Settings" && (
+                        {currentView === "Companies" && (
                             <ListCompanyDB />
                         )}
 
