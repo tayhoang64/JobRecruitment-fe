@@ -32,6 +32,9 @@ import AddJobForm from './components/JobAdd';
 import isContentCreator from './utils/isContentCreator';
 import UpdateJobForm from './components/JobUpdate';
 import CompanyViewDetail from './components/CompanyDetail';
+import EditCV from './components/EditCV';
+import TemplateBDAdd from './components/TemplateDBAdd';
+import TemplateBDUpdate from './components/TemplateDBUpdate';
 
 
 function App() {
@@ -85,7 +88,7 @@ function App() {
               <Footer />
             </ProtectedRoute>}
           />
-          
+
 
           <Route path='/company/:companyId/jobs/create' element={
             <ProtectedRoute checkPermission={isContentCreator} redirectPath="/">
@@ -105,7 +108,7 @@ function App() {
             </>
           } />
 
-          
+
 
           <Route
             path="/company/signup"
@@ -116,11 +119,44 @@ function App() {
                 <Footer /></>
             }
           />
+
+          <Route
+            path="/edit/:type/:id"
+            element={
+              <>
+                <Header offSlide={false} />
+                <EditCV />
+                <Footer /></>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute checkPermission={isAdmin} redirectPath="/">
                 <Dashboard />
+                <Footer />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/template/update/:id"
+            element={
+              <ProtectedRoute checkPermission={isCVDecorator} redirectPath="/">
+                <Header offSlide={false} />
+                <TemplateBDUpdate />
+                <Footer />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/template/add"
+            element={
+              <ProtectedRoute checkPermission={isCVDecorator} redirectPath="/">
+                <Header offSlide={false} />
+                <TemplateBDAdd />
                 <Footer />
               </ProtectedRoute>
             }

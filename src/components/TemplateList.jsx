@@ -24,6 +24,7 @@ import {
 import { BASE_URL } from '../constants';
 import axios from 'axios';
 import { FiEdit2, FiEye, FiAlertCircle, FiSearch } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   transition: "transform 0.2s ease-in-out",
@@ -256,14 +257,16 @@ const TemplateList = () => {
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Edit Template" arrow>
-                          <IconButton
-                            aria-label={`Edit ${template.title}`}
-                            sx={{
-                              "&:hover": { color: theme.palette.primary.main }
-                            }}
-                          >
-                            <FiEdit2 />
-                          </IconButton>
+                          <Link to={`/edit/template/${template.id}`}>
+                            <IconButton
+                              aria-label={`Edit ${template.title}`}
+                              sx={{
+                                "&:hover": { color: theme.palette.primary.main }
+                              }}
+                            >
+                              <FiEdit2 />
+                            </IconButton>
+                          </Link>
                         </Tooltip>
                       </Box>
                     </Box>
