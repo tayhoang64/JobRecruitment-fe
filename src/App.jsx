@@ -32,6 +32,9 @@ import AddJobForm from './components/JobAdd';
 import isContentCreator from './utils/isContentCreator';
 import UpdateJobForm from './components/JobUpdate';
 import CompanyViewDetail from './components/CompanyDetail';
+import isCompanyOwner from './utils/isCompanyOwner';
+import OwnCompanies from './components/OwnCompanies';
+import CompanyUpdate from './components/CompanyUpdate';
 
 
 function App() {
@@ -40,6 +43,13 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path='/company/own' element={
+            <ProtectedRoute checkPermission={isCompanyOwner} redirectPath="/">
+            <Header offSlide={false} />
+            <OwnCompanies />
+            <Footer />
+          </ProtectedRoute>
+          } />
 
           <Route path='/auth' element={<Auth />} />
           <Route path='/profile' element={
@@ -77,6 +87,16 @@ function App() {
               <Footer />
             </>
           } />
+
+          <Route path='/company/update/:id' element={
+            <>
+              <Header offSlide={false} />
+              <CompanyUpdate />
+              <Footer />
+            </>
+          } />
+
+         
 
           <Route path='/company/:companyId/jobs/update/:id' element={
             <ProtectedRoute checkPermission={isContentCreator} redirectPath="/">

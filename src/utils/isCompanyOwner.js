@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../constants";
 
-const isCVDecorator = async () => {
+const isCompanyOwner = async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -21,4 +21,4 @@ const isCVDecorator = async () => {
   }
 };
 
-export default isCVDecorator;
+export default isCompanyOwner;

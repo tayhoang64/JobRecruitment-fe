@@ -83,11 +83,12 @@ function Header({ offSlide }) {
                         <Link className="nav-link" to={`/dashboard`}>Dashboard</Link>
                     </li>
                     )}
-                <li className="nav-item">
-                    <a className="nav-link" href="#portfolios">
-                    Work
-                    </a>
-                </li>
+                {role.indexOf("CompanyOwner") > -1 && (
+                    <li className="nav-item">
+                        <Link className="nav-link" to={`/company/own`}>List Own Companies</Link>
+                    </li>
+                    )}
+                
                 <li className="nav-item">
                     <a className="nav-link" href="#contact">
                     Contact
