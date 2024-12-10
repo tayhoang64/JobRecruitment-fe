@@ -88,7 +88,11 @@ function Header({ offSlide }) {
                         <Link className="nav-link" to={`/company/own`}>List Own Companies</Link>
                     </li>
                     )}
-                
+                {role.indexOf("CVDecorator") > -1 && (
+                    <li className="nav-item">
+                        <Link className="nav-link" to={`/dashboard/template`}>Manage Templates</Link>
+                    </li>
+                )}
                 <li className="nav-item">
                     <a className="nav-link" href="#contact">
                     Contact

@@ -1,5 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Select, MenuItem, Button, FormControl, InputLabel, Box, Stack, Container, Avatar, Alert } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  Box,
+  Stack,
+  Container,
+  Avatar,
+  Alert,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -7,7 +19,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { FiUpload } from "react-icons/fi";
 import dayjs from "dayjs";
 import axios from "axios";
-import { BASE_URL } from '../constants';
+import { BASE_URL } from "../constants";
+import { useNavigate } from "react-router-dom";
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -38,11 +51,14 @@ const UpdateProfile = () => {
   const [avatarFile, setAvatarFile] = useState(null);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/User/profile`)
+    axios
+      .get(`${BASE_URL}/api/User/profile`)
       .then((response) => {
         const user = response.data;
+        console.log(response.data);
         setFormData({
           fullName: user.fullName || "",
           title: user.title || "",
@@ -54,6 +70,7 @@ const UpdateProfile = () => {
           personalLink: user.personalLink || "",
           aboutMe: user.aboutMe || "",
           avatar: user.avatar || "",
+          certificates: user.certificates || "",
         });
       })
       .catch((error) => console.error("Failed to fetch user data:", error));
@@ -66,9 +83,10 @@ const UpdateProfile = () => {
     const formData = new FormData();
     formData.append("avatarFile", file);
 
-    axios.put(`${BASE_URL}/api/User/uploadAvatar`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    axios
+      .put(`${BASE_URL}/api/User/uploadAvatar`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
       .then((response) => {
         setFormData((prev) => ({ ...prev, avatar: response.data.avatarUrl }));
       })
@@ -91,7 +109,8 @@ const UpdateProfile = () => {
     const newErrors = {};
     if (!formData.fullName) newErrors.fullName = "Full Name is required.";
     if (!formData.phone) newErrors.phone = "Phone is required.";
-    if (formData.phone && !/^\d{10,15}$/.test(formData.phone)) newErrors.phone = "Invalid phone number.";
+    if (formData.phone && !/^\d{10,15}$/.test(formData.phone))
+      newErrors.phone = "Invalid phone number.";
     if (!formData.city) newErrors.city = "City is required.";
     if (!formData.address) newErrors.address = "Address is required.";
 
@@ -101,14 +120,20 @@ const UpdateProfile = () => {
       return;
     }
 
-    axios.put(`${BASE_URL}/api/User/update`, formData)
+    axios
+      .put(`${BASE_URL}/api/User/update`, formData)
       .then(() => {
         alert("Profile updated successfully!");
         setIsLoading(false);
+        navigate("/profile");
       })
       .catch((error) => {
         if (error.response && error.response.data) {
-          setErrors({ general: error.response.data.message || "An error occurred while updating the profile." });
+          setErrors({
+            general:
+              error.response.data.message ||
+              "An error occurred while updating the profile.",
+          });
         }
         setIsLoading(false);
       });
@@ -243,7 +268,12 @@ const UpdateProfile = () => {
               <Button variant="outlined" color="inherit">
                 Cancel
               </Button>
-              <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isLoading}
+              >
                 {isLoading ? "Updating..." : "Update Profile"}
               </Button>
             </Box>
