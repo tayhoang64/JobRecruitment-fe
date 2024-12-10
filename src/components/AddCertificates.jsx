@@ -28,7 +28,7 @@ const FormHeader = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
 
-const CertificateForm = () => {
+const CertificateAddForm = () => {
   const months = [
     { label: "January", value: 1 },
     { label: "February", value: 2 },
@@ -269,4 +269,4 @@ const CertificateForm = () => {
   );
 };
 
-export default CertificateForm;
+export default CertificateAddForm;

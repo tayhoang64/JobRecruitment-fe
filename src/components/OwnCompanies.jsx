@@ -123,6 +123,9 @@ const OwnCompanies = () => {
                       <FaEye />
                     </IconButton>
                   </TableCell>
+                  <TableCell align="center">
+                    <Button href={`/company/update/${company.id}`}>Update</Button>
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

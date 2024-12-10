@@ -28,7 +28,7 @@ const FormHeader = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(4),
 }));
 
-const CertificateForm = () => {
+const CertificateEditForm = () => {
   const { id } = useParams(); // Lấy ID từ URL
   const months = [
     { label: "January", value: 1 },
@@ -289,4 +289,4 @@ const CertificateForm = () => {
   );
 };
 
-export default CertificateForm;
+export default CertificateEditForm;

@@ -246,7 +246,8 @@
         event.preventDefault();
 
         const formDataToSend = new FormData();
-        formDataToSend.append('companyType', formData.companyType)
+
+         formDataToSend.append('companyType', formData.companyType)
         formDataToSend.append('companySize', formData.companySize)
         formDataToSend.append('sizeRange', formData.sizeRange)
         formDataToSend.append('description', formData.description)

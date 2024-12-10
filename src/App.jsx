@@ -35,10 +35,15 @@ import CompanyViewDetail from './components/CompanyDetail';
 import isCompanyOwner from './utils/isCompanyOwner';
 import OwnCompanies from './components/OwnCompanies';
 import CompanyUpdate from './components/CompanyUpdate';
-import CompanyViewDetail from "./components/CompanyDetail";
 import EditCV from "./components/EditCV";
 import TemplateBDAdd from "./components/TemplateDBAdd";
 import TemplateBDUpdate from "./components/TemplateDBUpdate";
+import Certificates from "./components/Certificates";
+import CertificateAddForm from "./components/AddCertificates";
+import CertificateEditForm from "./components/EditCertificate";
+import SavedCV from "./components/SavedCV";
+import isLogin from "./utils/isLogin";
+
 
 function App() {
   return (
@@ -153,7 +158,7 @@ function App() {
             element={
               <>
                 <Header offSlide={false} />
-                <AddCertificates />
+                <CertificateAddForm />
                 <Footer />
               </>
             }
@@ -163,7 +168,7 @@ function App() {
             element={
               <>
                 <Header offSlide={false} />
-                <EditCertificate />
+                <CertificateEditForm />
                 <Footer />
               </>
             }
@@ -276,6 +281,17 @@ function App() {
             element={
               <ProtectedRoute checkPermission={isAdmin} redirectPath="/">
                 <Dashboard />
+                <Footer />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/saved"
+            element={
+              <ProtectedRoute checkPermission={isLogin} redirectPath="/auth">
+                <Header />
+                <SavedCV />
                 <Footer />
               </ProtectedRoute>
             }

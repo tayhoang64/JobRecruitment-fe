@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../constants";
 
 const EditCV = () => {
     const { id, type } = useParams(); 
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [htmlContent, setHtmlContent] = useState(''); 
     const htmlRef = useRef(null); 
@@ -47,30 +48,30 @@ const EditCV = () => {
 
     const handleSave = () => {
         if (htmlRef.current) {
-            const updatedHtml = htmlRef.current.innerHTML; // Lấy nội dung đã chỉnh sửa
+            const updatedHtml = htmlRef.current.innerHTML;
             if(type == 'template'){
                 axios.post(`${BASE_URL}/api/CV`, {
                     userId: user.id,
                     templateId: id,
                     htmlContent: updatedHtml
                 })
-                .then(response => {
-                    console.log(response.data)
+                .then(() => {
+                    alert("Saved Successfully")
+                    navigate('/saved')
                 }).catch(error => {
-                    console.error(error)
-                    setError(error.message);
+                    alert(error.message);
                 })
             } else {
-                axios.put(`${BASE_URL}/api/CV`, {
+                axios.put(`${BASE_URL}/api/CV/${id}`, {
                     userId: user.id,
                     templateId: id,
                     htmlContent: updatedHtml
                 })
-                .then(response => {
-                    console.log(response.data)
+                .then(() => {
+                    alert("Saved Successfully")
+                    navigate('/saved')
                 }).catch(error => {
-                    console.error(error)
-                    setError(error.message);
+                    alert(error.message);
                 })
             }
         }
@@ -78,12 +79,11 @@ const EditCV = () => {
 
     return (
         <div>
-            <h1 style={{ marginTop: "50px" }}>Hello, id = {id}, type = {type}</h1>
-            <button 
+            <button
                 onClick={handleSave} 
-                style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px", backgroundColor: "blue", cursor: "pointer" }}
+                style={{ marginTop: "100px", padding: "10px 20px", fontSize: "16px", backgroundColor: "blue", cursor: "pointer" }}
             >
-                Lưu nội dung
+                Save
             </button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <div

@@ -10,11 +10,28 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import { BASE_URL } from '../constants';
+import axios from 'axios';
 
-export default function AccountMenu({  avatar, setUser}) {
+export default function AccountMenu({ avatar, setUser }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const [role, SetRole] = React.useState([]);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    axios.get(`${BASE_URL}/api/User/getRoles`)
+      .then(response => {
+        SetRole(Array.from(response.data.$values))
+      })
+      .catch(error => {
+        console.error('Error fetching user role:', error);
+      });
+  }, [])
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -82,11 +99,14 @@ export default function AccountMenu({  avatar, setUser}) {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem >
-          <Avatar /> <Link to ="/profile">Profile</Link>
+          <Avatar /> <Link to="/profile">Profile</Link>
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
+        {role.indexOf("User") > -1 && (
+          <MenuItem onClick={handleClose}>
+            <Avatar /> <Link to={`/saved`}>Saved CV</Link>
+          </MenuItem>
+        )}
+
         <Divider />
         <MenuItem onClick={handleClose}>
           Add another account
@@ -101,7 +121,7 @@ export default function AccountMenu({  avatar, setUser}) {
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-            Logout
+          Logout
         </MenuItem>
       </Menu>
     </React.Fragment>
