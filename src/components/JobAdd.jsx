@@ -24,7 +24,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { motion } from "framer-motion";
 import { BASE_URL } from '../constants';
-import dayjs from "dayjs";
 
 import axios from 'axios'; 
 import { Navigate, useParams } from "react-router-dom";

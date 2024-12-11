@@ -15,7 +15,7 @@ const isContentCreator = async () => {
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
   try {
-    const response = await axios.get(`${BASE_URL}/api/Staff/checkCC/${companyId}`);
+    await axios.get(`${BASE_URL}/api/Staff/checkCC/${companyId}`);
     return true;
   } catch (error) {
     console.log(error.status);

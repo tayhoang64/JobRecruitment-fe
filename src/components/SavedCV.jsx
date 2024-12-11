@@ -75,20 +75,17 @@ const SavedCV = () => {
         });
   }, [])
 
-  const handleDownload = async (url) => {
-    const fileUrl = `${BASE_URL}${url}`;
-    console.log(fileUrl)
-    try {
-        const response = await axios.get(fileUrl, {
-          responseType: "blob",
-        });
-  
-        const blob = new Blob([response.data], { type: "application/pdf" });
-        saveAs(blob, `CV_${user.userName}.pdf`);
-    } catch (error) {
-        console.error("Error downloading the file:", error);
-    }
-  }
+  // const handleDownload = async (id) => {
+  //   const token = localStorage.getItem('token');
+  //   if (token) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+  //     axios.get(`${BASE_URL}/api/cv/${id}/download`)
+  //       .catch(error => {
+  //         alert(error.message);
+  //       });
+  //   }
+  // }
 
   return (
     <Box sx={{ p: 4 }} style={{marginTop: "60px"}}>
@@ -131,25 +128,12 @@ const SavedCV = () => {
                 </Box>
               </CardHeader>
 
-              <CardContent sx={{ flex: 1, backgroundColor: "#fafafa" }}>
-                <PlaceholderLine />
-                <PlaceholderLine sx={{ width: "75%" }} />
-                <PlaceholderLine sx={{ width: "50%" }} />
-              </CardContent>
-
               <Box sx={{ p: 2, display: "flex", gap: 1, justifyContent: "flex-end" }}>
-                <Button
-                  startIcon={<FaShare />}
-                  variant="outlined"
-                  size="small"
-                >
-                    Share
-                </Button>
                 <Button
                   startIcon={<FaDownload />}
                   variant="outlined"
                   size="small"
-                  onClick={() => handleDownload(cv.file)}
+                  href={`${BASE_URL}/api/cv/${cv.id}/download`}
                 >
                     Download PDF
                 </Button>

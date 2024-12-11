@@ -8,6 +8,8 @@ import AccountMenu from './AccountMenu';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from 'react-router-dom';
+import isContentCreator from '../utils/isContentCreator';
+import isContentCreatorWithoutCompanyId from '../utils/isContentCreatorWithoutCompanyId';
 
 function Header({ offSlide }) {
   const [user, setUser] = useState(null);
@@ -78,6 +80,9 @@ function Header({ offSlide }) {
                     Jobs
                     </Link>
                 </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to={`/job-management`}>Job Management</Link>
+                    </li>
                 {role.indexOf("Admin") > -1 && (
                     <li className="nav-item">
                         <Link className="nav-link" to={`/dashboard`}>Dashboard</Link>

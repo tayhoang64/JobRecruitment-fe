@@ -11,10 +11,17 @@ import {
   Divider,
   Paper,
   Avatar,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Input
 } from "@mui/material";
 import { BASE_URL } from "../constants";
 import axios from "axios";
 import { styled } from "@mui/system";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 import {
   FaMapMarkerAlt,
   FaCalendarAlt,
@@ -24,7 +31,7 @@ import {
   FaLaptopHouse,
 } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   padding: "2rem",
@@ -56,10 +63,45 @@ const RecommendedJobCard = styled(Card)(({ theme }) => ({
 }));
 const JobViewDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchJobDetail();
+    fetchUser();
+    fetchRecruitment();
   }, []);
+
+const fetchUser = () => {
+  const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/User/profile`)
+        .then(response => {
+          setUser(response.data);
+        })
+        .catch(() => {
+          setUser(null);
+        });
+    }
+    
+}
+
+  const fetchRecruitment = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      axios.get(`${BASE_URL}/api/Recruitment/${id}`)
+        .then(response => {
+          setRecruitment(response.data);
+        })
+        .catch(() => {
+          setRecruitment(null);
+        });
+    }
+  }
+
 
   const fetchJobDetail = () => {
     axios
@@ -74,7 +116,7 @@ const JobViewDetail = () => {
           location: job.location,
           workStyle: job.workStyle,
           description: job.description,
-          endDate: job.endDate,
+          endDate: job.endDay,
           experienceYears: job.experienceYear,
           recruitmentCount: job.recruitmentCount,
           skills: Array.from(job.skills.$values).map((s) => s.skillName),
@@ -84,7 +126,12 @@ const JobViewDetail = () => {
         console.error("Error fetching user profile:", error);
       });
   };
+  const [file, setFile] = useState(null);
   const [jobData, setJobData] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [user, setUser] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [recruitment, setRecruitment] = useState(null);
 
   const [recommendedJobs] = useState([
     {
@@ -110,12 +157,71 @@ const JobViewDetail = () => {
     },
   ]);
 
-  const handleApply = () => {
-    console.log("Application submitted");
-  };
-
   const handleBack = () => {
     console.log("Navigate back");
+  };
+
+  const handleApply = () => {
+    if(user == null){
+      navigate('/auth')
+    }
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setFile(null);
+    setOpenModal(false);
+  };
+
+  const handleCancel = () => {
+    let isConfirm = confirm("Are you sure?");
+    if(isConfirm){
+      const token = localStorage.getItem('token');
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axios.delete(`${BASE_URL}/api/recruitment/${id}`)
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(error => {
+            switch(error.status){
+              case 400: 
+                alert(error.response.data.error);
+                break;
+              case 401: 
+                navigate('/auth')
+                break;
+            }
+          });
+      }
+    }
+  }
+
+  const handleSubmitApplication = () => {
+    const formData = new FormData();
+    formData.append("JobId", id);
+    formData.append("UserId", user.id);
+    formData.append("FormFile", selectedFile);
+    axios.post(`${BASE_URL}/api/recruitment`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).then(() => {
+      window.location.reload();
+    } ).catch((error) => {
+      alert(error.statusCode);
+    })
+    setOpenModal(false);
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile && selectedFile.type === "application/pdf") {
+      setFile(URL.createObjectURL(selectedFile));
+      setSelectedFile(selectedFile);
+    } else {
+      alert("Please upload a valid PDF file.");
+    }
   };
 
   return (
@@ -248,18 +354,26 @@ const JobViewDetail = () => {
               </Typography>
               <Typography variant="body1" sx={{ mt: 1 }}>
                 <FaCalendarAlt /> Application Deadline:{" "}
-                {new Date(jobData.endDate).toLocaleDateString()}
+                {jobData.endDate ? (
+                  new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(jobData.endDate))
+                ) : (
+                  "No deadline available"
+                )}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} sx={{ textAlign: "right" }}>
-              <ApplyButton
-                variant="contained"
-                color="primary"
-                onClick={handleApply}
-                size="large"
-              >
-                Apply Now
-              </ApplyButton>
+              
+              {recruitment == null ? (
+                <ApplyButton
+                  variant="contained"
+                  color="primary"
+                  onClick={handleApply}
+                  size="large"
+                >
+                  Apply Now
+                </ApplyButton>) : (
+                  <Button onClick={handleCancel} color="error">Cancel</Button>
+                )}
             </Grid>
           </Grid>
         </Box>
@@ -304,6 +418,36 @@ const JobViewDetail = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Modal */}
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Apply for {jobData.title}</DialogTitle>
+        <DialogContent>
+          <Input
+            type="file"
+            fullWidth
+            sx={{ mb: 2 }}
+            inputProps={{ accept: ".pdf" }}
+            onChange={handleFileChange}
+          />
+
+          {file && (
+            <Box sx={{ width: "100%", height: "500px", mt: 4 }}>
+              <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
+                <Viewer fileUrl={file} />
+              </Worker>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmitApplication} color="primary">
+            Submit Application
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

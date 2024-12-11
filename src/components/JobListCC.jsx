@@ -26,7 +26,7 @@ import { styled } from "@mui/system";
 import { MdExpandMore, MdLocationOn, MdWorkOutline, MdAccessTime, MdBusinessCenter, MdDescription, MdSearch, MdFilterList } from "react-icons/md";
 import { BASE_URL } from '../constants';
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: "16px",
@@ -49,25 +49,18 @@ const SearchContainer = styled(Box)(({ theme }) => ({
   flexWrap: "wrap"
 }));
 
-const JobList = () => {
-  const [expanded, setExpanded] = useState(false);
-  const [page, setPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [locationFilter, setLocationFilter] = useState("all");
-  const [workStyleFilter, setWorkStyleFilter] = useState("all");
-  const [salaryRange, setSalaryRange] = useState([0, 200000]);
-  const [experienceFilter, setExperienceFilter] = useState("all");
-  const [skillFilter, setSkillFilter] = useState("all");
-  const [displayedJobs, setDisplayedJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
-  const itemsPerPage = 5;
+const JobListCC = () => {
+  const { id } = useParams();
+  const [jobs, setJobs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("")
   useEffect(() => {
     fetchJob();
-  },[expanded, page, searchTerm, locationFilter, workStyleFilter, salaryRange, experienceFilter, skillFilter])
+  },[])
 
   const fetchJob = () => {
-    axios.get(`${BASE_URL}/api/Job`)
+    axios.get(`${BASE_URL}/api/Job/company/${id}`)
         .then(response => {
+            console.log(response.data)
             let data = Array.from(response.data.$values).map(value => {
                 return {
                     jobId: value.jobId,
@@ -89,59 +82,12 @@ const JobList = () => {
                   
                 }
             })
-            const jobsData = {
-                jobs: data
-              };
-            
-              const filteredJobs = jobsData.jobs.filter(job => {
-                const matchesSearch = job.jobName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  job.companyDetails.companyName.toLowerCase().includes(searchTerm.toLowerCase());
-              
-                const matchesLocation = locationFilter === "all" || job.location.toLowerCase().includes(locationFilter.toLowerCase());
-                
-                const matchesWorkStyle = workStyleFilter === "all" || job.workStyle.toLowerCase() === workStyleFilter.toLowerCase();
-                
-                const matchesSalary = job.salary.toLowerCase() === "thỏa thuận" || job.salary.toLowerCase() === "wage agreement" ||
-                  (parseInt(job.salary) >= salaryRange[0] && parseInt(job.salary) <= salaryRange[1]);
-              
-                const matchesExperience = experienceFilter === "all" || job.experienceYear.toString() === experienceFilter;
-              
-                const matchesSkill = skillFilter === "all" || job.skills.some(skill => skill.toLowerCase().includes(skillFilter.toLowerCase()));
-              
-                return matchesSearch && matchesLocation && matchesWorkStyle && matchesSalary && matchesExperience && matchesSkill;
-              });
-              
-              
-              const startIndex = (page - 1) * itemsPerPage;
-              const endIndex = startIndex + itemsPerPage;
-              const displayedJobs = filteredJobs.slice(startIndex, endIndex);
-              setDisplayedJobs(displayedJobs)
-              setFilteredJobs(filteredJobs)
+            setJobs(data);
         })
         .catch(error => {
           console.error('Error fetching user profile:', error);
         });
   }
-
-  
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
-
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
-  const handleViewDetails = (job) => {
-    console.log("View details for:", job);
-  };
-
-  const handleSalaryRangeChange = (event, newValue) => {
-    setSalaryRange(newValue);
-  };
-
-  
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -159,88 +105,17 @@ const JobList = () => {
             startAdornment: <MdSearch size={24} style={{ marginRight: "8px" }} />
           }}
         />
-
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Location</InputLabel>
-          <Select
-            value={locationFilter}
-            label="Location"
-            onChange={(e) => setLocationFilter(e.target.value)}
-          >
-            <MenuItem value="all">All Locations</MenuItem>
-            <MenuItem value="San Francisco">San Francisco</MenuItem>
-            <MenuItem value="New York">New York</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Work Style</InputLabel>
-          <Select
-            value={workStyleFilter}
-            label="Work Style"
-            onChange={(e) => setWorkStyleFilter(e.target.value)}
-          >
-            <MenuItem value="all">All Types</MenuItem>
-            <MenuItem value="Full-time">Full-time</MenuItem>
-            <MenuItem value="Remote">Remote</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Experience (Years)</InputLabel>
-          <Select
-            value={experienceFilter}
-            label="Experience"
-            onChange={(e) => setExperienceFilter(e.target.value)}
-          >
-            <MenuItem value="all">All Experience</MenuItem>
-            <MenuItem value="3">3 Years</MenuItem>
-            <MenuItem value="5">5 Years</MenuItem>
-          </Select>
-        </FormControl>
-
-        <FormControl sx={{ minWidth: 200 }}>
-          <InputLabel>Skills</InputLabel>
-          <Select
-            value={skillFilter}
-            label="Skills"
-            onChange={(e) => setSkillFilter(e.target.value)}
-          >
-            <MenuItem value="all">All Skills</MenuItem>
-            <MenuItem value="React">React</MenuItem>
-            <MenuItem value="JavaScript">JavaScript</MenuItem>
-            <MenuItem value="Figma">Figma</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Box sx={{ width: 300 }}>
-          <Typography gutterBottom>Salary Range</Typography>
-          <Slider
-            value={salaryRange}
-            onChange={handleSalaryRangeChange}
-            valueLabelDisplay="auto"
-            min={0}
-            max={200000}
-            step={10000}
-            valueLabelFormat={(value) => `$${value.toLocaleString()}`}
-          />
-        </Box>
       </SearchContainer>
+      <Button href={`/company/${id}/jobs/create`}>Add New Job</Button>
 
       <Grid container spacing={3}>
-        {displayedJobs.map((job, index) => (
+        {jobs.map((job, index) => (
           <Grid item xs={12} key={index}>
             <StyledCard>
               <Accordion
-                expanded={expanded === `panel${index}`}
-                onChange={handleChange(`panel${index}`)}
                 sx={{ boxShadow: "none" }}
               >
-                <AccordionSummary
-                  expandIcon={<MdExpandMore size={24} />}
-                  aria-controls={`panel${index}bh-content`}
-                  id={`panel${index}bh-header`}
-                >
+                <AccordionSummary>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item>
                       <Avatar sx={{ bgcolor: "primary.main" }}>
@@ -292,10 +167,9 @@ const JobList = () => {
                         <Button
                           variant="contained"
                           color="primary"
-                          onClick={() => handleViewDetails(job)}
                           sx={{ mt: 1 }}
                         >
-                         <Link to={`/jobs/${job.jobId}`} style={{ color: "white" }}>View Detail</Link>
+                         <Link to={`/company/${id}/jobs/update/${job.jobId}`} style={{ color: "white" }}>Update</Link>
                         </Button>
                       </Grid>
                     </Grid>
@@ -336,9 +210,13 @@ const JobList = () => {
                       <Typography variant="body2" paragraph>
                         <strong>Address:</strong> {job.companyDetails.address}
                       </Typography>
-                      <Typography variant="body2" paragraph>
-                        <strong>About:</strong> {job.companyDetails.description}
-                      </Typography>
+                      <strong>About:</strong>
+                      <Typography 
+                        variant="body2" 
+                        paragraph
+                        component="div"
+                        dangerouslySetInnerHTML={{ __html: job.companyDetails.description }}
+                    />
                     </Grid>
                   </Grid>
                 </AccordionDetails>
@@ -347,17 +225,8 @@ const JobList = () => {
           </Grid>
         ))}
       </Grid>
-
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-        <Pagination
-          count={Math.ceil(filteredJobs.length / itemsPerPage)}
-          page={page}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </Box>
     </Container>
   );
 };
 
-export default JobList;
+export default JobListCC;

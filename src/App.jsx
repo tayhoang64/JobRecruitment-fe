@@ -43,6 +43,9 @@ import CertificateAddForm from "./components/AddCertificates";
 import CertificateEditForm from "./components/EditCertificate";
 import SavedCV from "./components/SavedCV";
 import isLogin from "./utils/isLogin";
+import OurCompaniesCC from "./components/OurCompaniesCC";
+import isContentCreatorWithoutCompanyId from "./utils/isContentCreatorWithoutCompanyId";
+import JobListCC from "./components/JobListCC";
 
 
 function App() {
@@ -113,6 +116,21 @@ function App() {
             </ProtectedRoute>}
           />
           
+          <Route path='/job-management' element={
+            <ProtectedRoute checkPermission={isContentCreatorWithoutCompanyId} redirectPath="/">
+              <Header offSlide={false} />
+              <OurCompaniesCC />
+              <Footer />
+            </ProtectedRoute>}
+          />
+
+          <Route path='/job-management/:id' element={
+            <ProtectedRoute checkPermission={isContentCreatorWithoutCompanyId} redirectPath="/">
+              <Header offSlide={false} />
+              <JobListCC />
+              <Footer />
+            </ProtectedRoute>}
+          />
 
           <Route path='/company/:companyId/jobs/create' element={
             <ProtectedRoute checkPermission={isContentCreator} redirectPath="/">
@@ -200,6 +218,7 @@ function App() {
               <>
                 <Header offSlide={false} />
                 <JobViewDetail />
+                
                 <Footer />
               </>
             }
@@ -240,17 +259,6 @@ function App() {
                 <AddJobForm />
                 <Footer />
               </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/jobs/:id"
-            element={
-              <>
-                <Header offSlide={false} />
-                <JobViewDetail />
-                <Footer />
-              </>
             }
           />
 
